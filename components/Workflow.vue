@@ -1,6 +1,7 @@
 <template lang="pug">
 div
-	v-container(:fluid="true" v-show="table")#maincontainer
+	//v-container(:fluid="true" v-show="table")#maincontainer
+	v-container(:fluid="true")#maincontainer
 		v-card.p-4(:elevation="6" min-width="100%")
 			v-row
 				v-col(cols="12").d-flex.flex-column.justify-space-between.card_text.align-start.pl-6.pr-6
@@ -8,7 +9,7 @@ div
 					v-container(:fluid="true")
 						v-form(ref="form" :lazy-validation="false")
 							v-row
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="engineName" label='Тип двигателя' required placeholder="7L 58/64" outlined color="#00897B" hint="Введите марку дизеля").mb-2
 									v-text-field(v-model="enginePower" label='Мощность двигателя, N' required placeholder="9800" suffix="кВт" outlined color="#00897B" hint="Необходимо ввести суммарную (аггрегатную) мощность ДВС" type='number').mb-2
 									v-text-field(v-model="engineRotationFrequency" label='Частота вращения коленчатого вала, n' required placeholder="428" suffix="об/мин" outlined color="#00897B" type='number').mb-2
@@ -25,7 +26,7 @@ div
 											br
 											| 0 - если двигатель без наддува
 									v-text-field(v-model="engineCylinderNum" label='Число цилиндров, z' required placeholder="7" suffix="штук" outlined color="#00897B" type='number').mb-2
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									h4.mb-6 Параметры по температуре
 									v-text-field(v-model="initialTemp" label='Температура окружающей среды, To' required disabled outlined color="#00897B").mb-2
 										template(slot='append')
@@ -40,14 +41,14 @@ div
 									v-text-field(v-else v-model="temp3" label='Максимальное снижение температуры в охладителе наддувочного воздуха, δxmaxm' required placeholder="100" suffix="К" outlined color="#00897B" hint="Максимальное снижение температуры в охладителе наддувочного воздуха, δxmaxm; Для 2-х тактных: 40...140; Для 4-х тактных: 0...80" type='number').mb-2
 									h4.mb-3 Коэффициент избытка воздуха
 									v-row
-										v-col(cols="6")
+										v-col(cols="12" md="6")
 											v-text-field(v-model="AirRatioMin" label='Минимальное значение, αmin' hint="Минимальное значение, αmin" required placeholder="1,7" outlined color="#00897B" type='number').mb-2
-										v-col(cols="6")
+										v-col(cols="12" md="6")
 											v-text-field(v-model="AirRatioMax" label='Максимальное значение, αmax' hint="Максимальное значение, αmax" required placeholder="2,2" outlined color="#00897B" type='number').mb-2
 											// отметить вывод с точкой, а не запятой
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									h4.mb-6 Параметры по давлению
 									v-text-field(v-model="environmentalPressure" label='Давление окружающей среды, Pо' required disabled outlined suffix="МПа" color="#00897B" type="number").mb-2
 									//секекты выбора Потери напора в охладителе
@@ -76,7 +77,7 @@ div
 									v-select(v-else-if="selectCycle=='4' && !engineBoostType=='0'" v-model="BoostPressure" placeholder="0,005" outlined label="Давления наддува (начальное значение), Pk(1)" :items="BoostPressureFourStroke" required color="#00897B" item-color="warning" suffix="МПа").mb-2
 									v-select(v-else v-model="BoostPressure" placeholder="Доступно после выбора тактности и типа наддува" outlined label="Давления наддува (начальное значение), Pk(1)" :items="headLossFourStroke" required color="#00897B" item-color="warning" suffix="МПа" disabled).mb-2
 									// конец селектов
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									h4.mb-6 Параметры топлива
 									v-btn(color="#00897B" :large="true" @click.stop="fuelDialog = true").theme--light.v-btn.custom-btn.mb-6 Выбрать марку топлива
 									v-dialog(v-model="fuelDialog" min-width="300")
@@ -93,7 +94,7 @@ div
 									v-text-field(v-model="NetCalorificValue" label='Низшая теплота сгорания, Qн' suffix="кДж/кг" required disabled outlined color="#00897B")
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="compressionRatio" label='Степень сжатия, ε' required outlined color="#00897B" placeholder="12" hide-details type='number').mb-2
 									v-alert(text dense color='teal' border='left' icon="mdi-arrow-up")
 										p.font-weight-light.caption.mb-0 Диапазоны для ДВС с ГТН:
@@ -121,7 +122,7 @@ div
 												span.font-weight-bold.cyan--text Для прямоточной 
 												span - 0.02-0.13
 										p.font-weight-light.caption.mb-0 Для 4-х тактных ДВС - 0
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="pressureIncreaseParam" label='Степень повышения давления (начальное значение), λ' required outlined color="#00897B" placeholder="1,3" hide-details type='number').mb-2
 									v-alert(text dense color='teal' border='left' icon="mdi-arrow-up")
 										ul
@@ -143,25 +144,25 @@ div
 								v-col(cols="12")
 									h4.mb-6 Параметры точности расчета
 							v-row
-								v-col(cols="3")
-									v-text-field(v-model="coefficientOfExcessAir" label='Шаг изменения коэффициента избытка воздуха, δα' required outlined color="#00897B" hint="Шаг изменения коэффициента избытка воздуха, δα - Без особых рекомендаций преподавателя вводить 0.1" type='number').mb-2
-								v-col(cols="3")
-									v-text-field(v-model="coefficientOfExcessPressure" label='Шаг изменения степени повышения давления, δλ' required outlined color="#00897B" hint="Шаг изменения степени повышения давления, δλ - Без особых рекомендаций преподавателя вводить 0.05" type='number').mb-2
-								v-col(cols="3")
-									v-text-field(v-model="CalculationErrorPressure" label='Погрешность расчета  по мощности, δNe' required outlined color="#00897B" hint="Погрешность расчета  по мощности, δNe - Без особых рекомендаций преподавателя вводить 0.5" type='number').mb-2
-								v-col(cols="3")
+								v-col(cols="12" md="3" sm="6")
+									v-text-field(v-model="coefficientOfExcessAir" label='Шаг изменения коэффициента избытка воздуха, δα' required outlined color="#00897B" hint="Шаг изменения коэффициента избытка воздуха, δα - Без особых рекомендаций преподавателя вводить 0.1" type='number')
+								v-col(cols="12" md="3" sm="6")
+									v-text-field(v-model="coefficientOfExcessPressure" label='Шаг изменения степени повышения давления, δλ' required outlined color="#00897B" hint="Шаг изменения степени повышения давления, δλ - Без особых рекомендаций преподавателя вводить 0.05" type='number')
+								v-col(cols="12" md="3" sm="6")
+									v-text-field(v-model="CalculationErrorPressure" label='Погрешность расчета  по мощности, δNe' required outlined color="#00897B" hint="Погрешность расчета  по мощности, δNe - Без особых рекомендаций преподавателя вводить 0.5" type='number')
+								v-col(cols="12" md="3" sm="6")
 									v-text-field(v-model="CalculationError" label='Погрешность расчета, δ' required outlined color="#00897B" hint="Без особых рекомендаций преподавателя вводить 0.5" type='number').mb-2
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" sm="6")
 									v-text-field(v-model="mechanicalEngineEfficiency" label='Механический КПД двигателя, η' required outlined color="#00897B" suffix="%" hint="При отсутствии данных принимать из интервала 75-96%" type='number' placeholder="96").mb-2
 									v-text-field(v-model="mechanicalGearboxEfficiency" label='Механический КПД редуктора, ηдв' required outlined color="#00897B" suffix="%" hint="При газоотурбинном наддуве, при отсутствии редуктора для привода воздуходувки, потери отутствуют, ввести 100" type='number' placeholder="100").mb-2
-								v-col(cols="6")
+								v-col(cols="12" sm="6")
 									v-text-field(v-model="mechanicalTurbineEfficiency" label='КПД турбины, ηт' required outlined color="#00897B" suffix="%" hint="При отсутствии рекомендация принимать из интервала 76-86%" type='number' placeholder="82").mb-2
 									v-text-field(v-model="mechanicalCompressorEfficiency" label='КПД компрессора, ηк' required outlined color="#00897B" suffix="%" hint="При отсутствии данных принимать из интервала 72-84%" type='number' placeholder="82").mb-2
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="heatCoeff" label='Коэффициент использования тепла в точке "Z", ζz' required outlined color="#00897B" type='number' placeholder="0,92" hide-details).mb-2
 									v-alert(text dense color='teal' border='left' icon="mdi-arrow-up")
 										ul
@@ -186,7 +187,7 @@ div
 											li.caption
 												span.font-weight-bold.cyan--text ВОД 
 												span - 0.85-0.95
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-select(v-model="IndicatorRoundingCoefficient" placeholder="0,98" outlined label="Коэффициент округления индикаторной диаграммы, φz" :items="['0.95','0.96','0.97','0.98']" required color="#00897B" item-color="warning").mb-2
 									//секекты выбора коэффициента продувки
 									v-select(v-if="engineBoostType=='0'" v-model="BoostCoefWithout" outlined label="Коэффициент продувки, φ" required color="#00897B" item-color="warning" disabled placeholder="0,95").mb-2
@@ -208,13 +209,13 @@ div
 												span - 0.01-0.04
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="kb" label='Показатель политропы сжатия воздуха в компрессоре, kb' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="kg" label='Показатель политропы расширения газов в турбине, kg' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="a1" label='Постоянная уравнения средней мольной теплоемкости воздуха при сжатии, a1' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="a2" label='Постоянная уравнения изохорной теплоемкости продуктов сгорания, a2' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="b1" label='Постоянная уравнения средней мольной теплоемкости продуктов сгорания, b1' required outlined color="#00897B" type='number' disabled).mb-2
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="b2" label='Постоянная уравнения изохорной теплоемкости сгорания, b2' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="n1" label='Первое приближение показателя политропы сжатия воздуха в цилиндре, n1' required outlined color="#00897B" type='number' disabled).mb-2
 									v-text-field(v-model="n2" label='Первое приближение показателя политропы расширения газов в цилиндре, n2' required outlined color="#00897B" type='number' disabled).mb-2
@@ -227,7 +228,7 @@ div
 					v-container(:fluid="true")
 						v-form(ref="form" :lazy-validation="false")
 							v-row
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="engineCylinderNum" label='Число цилиндров, z' required suffix="штук" outlined color="#00897B" disabled type='number').mb-2
 									v-text-field(v-model="selectCycle" label="Тактность, ν" required outlined color="#00897B" disabled type='number').mb-2
 									v-text-field(v-model="engineCylinderDiameter" label='Диаметр цилиндра, D' required suffix="мм" outlined color="#00897B" disabled type='number').mb-2
@@ -240,9 +241,8 @@ div
 										p Если известно значение длины шатуна, L, можно расчитать постоянную КШМ по формуле r/L:
 										v-btn(v-if="connectingRod==false" color="#00897B" @click="connectingRod=true").theme--light.v-btn.custom-btn Расчитать
 										v-btn(v-else color="#00897B" @click="connectingRod=false").theme--light.v-btn.custom-btn Отмена
-									v-expand-transition
-										v-text-field(v-show="connectingRod" v-model="connectingRodParam" label='Длина шатуна, L' required outlined color="#00897B" type='number' placeholder="400" suffix="мм").mb-2
-								v-col(cols="6")
+									v-text-field(v-show="connectingRod" v-model="connectingRodParam" label='Длина шатуна, L' required outlined color="#00897B" type='number' placeholder="400" suffix="мм").mb-2
+								v-col(cols="12" md="6")
 									v-btn(color="#00897B" :large="true" @click.stop="ksmDialog = true").theme--light.v-btn.custom-btn.mb-6 Расчет массы КШМ
 									v-dialog(v-model="ksmDialog" min-width="300")
 										v-card
@@ -251,26 +251,26 @@ div
 												v-icon mdi-close
 											v-card-text
 												v-row
-													v-col(cols="3")
+													v-col(cols="12" sm="6" md="3")
 														v-text-field(v-model="engineCylinderDiameterinMeters" label='Диаметр цилиндра' suffix="м" required disabled outlined color="#00897B" type="number")
-													v-col(cols="3")
+													v-col(cols="12" sm="6" md="3")
 														v-text-field(v-model="engineCylinderSshort" label='Площадь поршня' required disabled outlined color="#00897B" type="number")
 															template(slot='append')
 																span м
 																	sup 2
-													v-col(cols="3")
+													v-col(cols="12" sm="6" md="3")
 														v-text-field(v-model="ksmMass1" label='Приведенная масса поступательно движущихся частей КШМ' required outlined color="#00897B" type="number" hint="Приведенная масса поступательно движущихся частей КШМ")
 															template(slot='append')
 																span кг/м
 																	sup 2
-													v-col(cols="3")
+													v-col(cols="12" sm="6" md="3")
 														v-text-field(v-model="ksmMass2" label='Приведенная масса вращающихся частей КШМ' required outlined color="#00897B" type="number" hint="Приведенная масса вращающихся частей КШМ")
 															template(slot='append')
 																span кг/м
 																	sup 2
-													v-col(cols="6")
+													v-col(cols="12" md="6")
 														v-text-field(v-model="ksmMass3" label='Искомая поступа- тельная масса КШМ' suffix="кг" required outlined color="#00897B" disabled type="number")
-													v-col(cols="6")
+													v-col(cols="12" md="6")
 														v-text-field(v-model="ksmMass4" label='Искомая  вращающаяся масса КШМ' suffix="кг" required outlined color="#00897B" disabled type="number")
 													v-col(cols="12")
 														v-simple-table
@@ -331,11 +331,12 @@ div
 											span &#176;
 							v-divider
 							v-row.mt-5
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									v-text-field(v-model="Pa" label='Давление в начале сжатия, Pа' required outlined color="#00897B" suffix="МПа" type='number').mb-2
-								v-col(cols="6")
+								v-col(cols="12" md="6")
 									p Имя: {{name}}
 									p Группа: {{group}}
+									p Содержание углерода и водорода в топливе: {{carbon_hydrogen_content}}
 </template>
 <script>
 import { mapMutations } from 'vuex'
@@ -365,21 +366,21 @@ export default {
 				{ text: 'Зольность, %, не более', value: 'AshContent' },
 			],
 			fuelItems: [
-				{name: 'DМХ', fuelDensity: '880', sulfurContent: '1', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо'},
-				{name: 'DМA', fuelDensity: '890', sulfurContent: '1.5', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо'},
-				{name: 'DМZ', fuelDensity: '890', sulfurContent: '1.5', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо'},
-				{name: 'DМB', fuelDensity: '900', sulfurContent: '2', fuelWater: '0.3', AshContent: '0.01', type: 'Дистилятное топливо'},
-				{name: 'RMA 10', fuelDensity: '920', sulfurContent: '2', fuelWater: '0.3', AshContent: '0.04', type: 'Остаточное топливо'},
-				{name: 'RMB 30', fuelDensity: '960', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо'},
-				{name: 'RMD 80', fuelDensity: '975', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо'},
-				{name: 'RME 180', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо'},
-				{name: 'RMG 180', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо'},
-				{name: 'RMG 380', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо'},
-				{name: 'RMG 500', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо'},
-				{name: 'RMG 700', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо'},
-				{name: 'RMK 380', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо'},
-				{name: 'RMK 500', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо'},
-				{name: 'RMK 700', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо'},
+				{name: 'DМХ', fuelDensity: '880', sulfurContent: '1', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо', carbon_hydrogen: '84,3/13'},
+				{name: 'DМA', fuelDensity: '890', sulfurContent: '1.5', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо', carbon_hydrogen: '83,9/12,8'},
+				{name: 'DМZ', fuelDensity: '890', sulfurContent: '1.5', fuelWater: '0', AshContent: '0.01', type: 'Дистилятное топливо', carbon_hydrogen: '84,5/12,6'},
+				{name: 'DМB', fuelDensity: '900', sulfurContent: '2', fuelWater: '0.3', AshContent: '0.01', type: 'Дистилятное топливо', carbon_hydrogen: '83,7/12,4'},
+				{name: 'RMA 10', fuelDensity: '920', sulfurContent: '2', fuelWater: '0.3', AshContent: '0.04', type: 'Остаточное топливо', carbon_hydrogen: '85,6/11,8'},
+				{name: 'RMB 30', fuelDensity: '960', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо', carbon_hydrogen: '84,4/11,6'},
+				{name: 'RMD 80', fuelDensity: '975', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо', carbon_hydrogen: '84,4/11,4'},
+				{name: 'RME 180', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо', carbon_hydrogen: '84,4/11,2'},
+				{name: 'RMG 180', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.07', type: 'Остаточное топливо', carbon_hydrogen: '85,6/10,8'},
+				{name: 'RMG 380', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо', carbon_hydrogen: '85,9/10,7'},
+				{name: 'RMG 500', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо', carbon_hydrogen: '86,2/10,6'},
+				{name: 'RMG 700', fuelDensity: '991', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.1', type: 'Остаточное топливо', carbon_hydrogen: '86,5/10,6'},
+				{name: 'RMK 380', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо', carbon_hydrogen: '86/10,4'},
+				{name: 'RMK 500', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо', carbon_hydrogen: '86,3/10,3'},
+				{name: 'RMK 700', fuelDensity: '1010', sulfurContent: '2', fuelWater: '0.5', AshContent: '0.15', type: 'Остаточное топливо', carbon_hydrogen: '86,6/10,2'},
 			],
 			engineName: '',
 			enginePower: '',
@@ -478,6 +479,9 @@ export default {
 		},
 		fuelWaterComputed() {
 			if (this.fuelSelected.length > 0) return this.fuelSelected[0]['fuelWater'];
+		},
+		carbon_hydrogen_content() {
+			if (this.fuelSelected.length > 0) return this.fuelSelected[0]['carbon_hydrogen'];
 		},
 		AshContentComputed() {
 			if (this.fuelSelected.length > 0) return this.fuelSelected[0]['AshContent'];

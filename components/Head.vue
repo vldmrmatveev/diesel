@@ -55,14 +55,14 @@
 				v-card.p-4(:elevation="6" min-width="100%")
 					v-container(:fluid="true")
 						v-row.align-center
-							v-col(cols="5")
+							v-col(cols="12" md="5")
 								h2.mb-4.pl-4 Прежде чем начать, необходимо ввести ФИО и группу
 								v-form(ref="form" v-model="valid" :lazy-validation="false").pl-4
 									v-text-field(v-model="name" label='ФИО' name="name" required placeholder="Фамилия, И.О." outlined color="#00897B" :rules="nameRules")
 									v-text-field(v-model="group" :rules="nameRules" label='Группа' required placeholder="ЭУ-52" outlined color="#00897B")
 									v-text-field(v-model="email" :rules="emailRules" label='Email' required placeholder="example@mail.com" outlined color="#00897B")
 									v-btn(color="#00897B" :disabled="!valid" :large="true" @click="validateBtn").theme--light.v-btn.custom-btn.custom-btn__link Продолжить
-							v-col(cols="3" offset="2")
+							v-col(cols="12" offset-md="2"  md="3")
 								.d-flex.align-center.justify-center.image_container
 									v-img(src="man_engine.png" :contain="true")
 									//v-show="table && valid"
