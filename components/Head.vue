@@ -1,5 +1,5 @@
 <template lang="pug">
-	v-container(:fluid="true")
+	v-container(:fluid="true").d-print-none
 		v-row
 			v-col(cols="12" xl="6")
 				v-card.p-4.mb-5(:elevation="6" min-width="100%")
@@ -60,7 +60,7 @@
 								v-form(ref="form" v-model="valid" :lazy-validation="false").pl-4
 									v-text-field(v-model="name" label='ФИО' name="name" required placeholder="Фамилия, И.О." outlined color="#00897B" :rules="nameRules")
 									v-text-field(v-model="group" :rules="nameRules" label='Группа' required placeholder="ЭУ-52" outlined color="#00897B")
-									v-text-field(v-model="email" :rules="emailRules" label='Email' required placeholder="example@mail.com" outlined color="#00897B")
+									//v-text-field(v-model="email" :rules="emailRules" label='Email' required placeholder="example@mail.com" outlined color="#00897B")
 									v-btn(color="#00897B" :disabled="!valid" :large="true" @click="validateBtn").theme--light.v-btn.custom-btn.custom-btn__link Продолжить
 							v-col(cols="12" offset-md="2"  md="3")
 								.d-flex.align-center.justify-center.image_container
@@ -73,10 +73,7 @@ import { mapMutations } from 'vuex'
 export default {
 	data() {
 		return {
-			//table: false,
 			valid: false,
-			//name: '',
-			//group: '',
 			email: '',
 			nameRules: [
 				(v) => !!v || 'Пустое поле',
@@ -113,10 +110,6 @@ export default {
 		...mapMutations({
 			validateBtn: 'validate'
 		})
-		/*validateBtn() {
-			console.log(this.$store.state.table);
-			//this.$store.state.table = !this.$store.state.table
-		}*/
 	},
 }
 </script>

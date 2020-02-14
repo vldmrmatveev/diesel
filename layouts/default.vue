@@ -1,6 +1,6 @@
 <template lang="pug">
 	v-app(dark)
-		v-app-bar(:clipped-left='clipped' fixed app)
+		v-app-bar(:clipped-left='clipped' fixed app).d-print-none
 			v-toolbar-title(v-text='title')
 			v-spacer
 			v-btn(text icon @click="$vuetify.theme.dark = !$vuetify.theme.dark")
@@ -8,7 +8,7 @@
 				v-icon(v-else) mdi-weather-night
 		v-content
 			nuxt
-		v-footer(:fixed='fixed' app)
+		v-footer(:fixed='fixed' app).d-print-none
 			span © {{date}}, СевГУ
 </template>
 
