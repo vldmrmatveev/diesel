@@ -1,7 +1,7 @@
 <template lang="pug">
 	v-container(:fluid="true").d-print-none
 		v-row
-			v-col(cols="12" xl="6")
+			v-col(cols="12")
 				v-card.p-4.mb-5(:elevation="6" min-width="100%")
 					v-row
 						v-col(cols="12" md="5" xl="3")
@@ -35,7 +35,7 @@
 									p Автор
 										br
 										| Очеретяный В.А.
-			v-col(cols="12" xl="6")
+			v-col(cols="12")
 				v-card.p-4.mb-5(:elevation="6" min-width="100%")
 					v-row
 						v-col(cols="12").d-flex.flex-column.justify-space-between.card_text.align-start.pl-6.pr-6

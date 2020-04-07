@@ -248,7 +248,7 @@ div
 									v-btn(color="#00897B" :large="true" @click="printPage" :disabled="!formWorkflowValidate").theme--light.v-btn.custom-btn.mb-6.custom-btn_fuel.mt-8.w-100 Распечатать / Сохранить в PDF
 								v-col(cols="12" md="8")
 									v-alert(v-if="!formWorkflowValidate" text dense color='teal' border='left' icon="mdi-arrow-left").mt-8 
-										p.caption Если кнопка слева не активна, значит вы пропустили одно из полей при заполнении
+										p.caption Если кнопка слева не активна, значит пропущено одно из полей при заполнении
 	v-container(:fluid="true").pt-0.d-none.d-print-block
 		v-row.pt-0
 			v-col(cols="12").pt-0
@@ -879,7 +879,8 @@ div
 									p.mb-0.text-center -
 								td
 									p.mb-0.text-center {{n2}}
-		//v-card.mt-8.p-4(:elevation="6" min-width="100%")
+	v-container(:fluid="true" v-show="table").d-print-none
+		v-card.mt-8.p-4(:elevation="6" min-width="100%")
 			v-row
 				v-col(cols="12").d-flex.flex-column.justify-space-between.card_text.align-start.pl-6.pr-6
 					h2.text-center.pl-3 Динамический расчет
@@ -996,13 +997,307 @@ div
 							v-row.mt-5
 								v-col(cols="12" md="6")
 									v-text-field(v-model="Pa" label='Давление в начале сжатия, Pа' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="Pc" label='Давление в конце сжатия, Pc' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="Pz" label='Максимальное давление сгорания, Pz' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="Pb" label='Давление в конце расширения, Pb' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="Ps" label='Давление в выпускном коллекторе, Ps' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="Pck" label='Давление под поршнем, Pck' required outlined color="#00897B" suffix="МПа" type='number').mb-2
+									v-text-field(v-model="n1Dynamic" label='Средний показатель политропы сжатия, n1' required outlined color="#00897B" type='number').mb-2
 								v-col(cols="12" md="6")
-									p Имя: {{name}}
-									p Группа: {{group}}
-									p Содержание углерода и водорода в топливе: {{carbon_hydrogen_content}}
-									p Постоянная КШМ:
+									v-text-field(v-model="n2Dynamic" label='Средний показатель политропы расширения, n2' required outlined color="#00897B" type='number').mb-2
+									v-text-field(v-model="Ro" label='Степень предварительного расширения, ρ' required outlined color="#00897B" type='number').mb-2
+									v-text-field(v-model="TurbinePower" label='Мощность турбины, Nt' required suffix="кВт" outlined color="#00897B" type='number').mb-2
+									v-text-field(v-model="CompressorPower" label='Мощность компрессора, Nk' required suffix="кВт" outlined color="#00897B" type='number').mb-2
+									v-text-field(v-model="ReductorKPD" label='КПД редуктора комбинированного ДВС, ηрд' required disabled suffix="%" outlined color="#00897B" type='number').mb-2
+									v-text-field(v-model="StepAngleChange" label='Шаг изменения угла поворота КВ, δφ' required disabled outlined color="#00897B"  type='number').mb-2
+										template(slot='append')
+											span &#176;C
+									v-btn(color="#00897B" :large="true" @click.stop="CylinderWork = true").theme--light.v-btn.custom-btn.custom-btn_fuel Выбрать порядок работы цилиндров
+									v-dialog(v-model="CylinderWork" min-width="300")
+										v-card
+											v-card-title.headline.mb-4.pt-6.justify-center Порядок работы цилиндров
+											v-btn(icon @click='CylinderWork = false').dialog-close
+												v-icon mdi-close
+											v-container
+												v-row
+													v-col(cols="12" md="8")
+														v-alert(text dense color='lightgrey' border='left')
+															p.font-weight-light.caption.mb-0 Кнопка со знаком вопроса (?) устанавливает порядок формирования формулы работы цилиндров из стандартной к доступной для программы (для V - образных двигателей)
+														v-simple-table(:dense="true").custom-table
+															template(v-slot:default)
+																thead
+																	tr
+																		th(colspan="4") 
+																			h3.text-center Углы между вспышками, между кривошипами некоторых ДВС
+																tbody
+																	tr
+																		td
+																			p.mb-0 Число цилиндров
+																		td
+																			p.mb-0 угол между кривошипами, &#176;
+																		td
+																			p.mb-0 угол между вспышками, &#176;
+																		td
+																			p.mb-0 порядок работы цилиндров
+																	tr
+																		td(colspan="4")
+																			h3.mb-0.text-center Четырехтактные
+																	tr
+																		td
+																			p.mb-0 5
+																		td
+																			p.mb-0 72
+																		td
+																			p.mb-0 144
+																		td
+																			p.mb-0 1-2-4-5-3
+																	tr
+																		td
+																			p.mb-0 6
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 1-5-3-6-2-4
+																	tr
+																		td
+																			p.mb-0 6
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 1-4-2-6-3-5
+																	tr
+																		td
+																			p.mb-0 6
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 1-3-5-6-4-2
+																	tr
+																		td
+																			p.mb-0 7
+																		td
+																			p.mb-0 51 3/7
+																		td
+																			p.mb-0 102 6/7
+																		td
+																			p.mb-0 1-2-4-6-7-5-3
+																	tr
+																		td
+																			p.mb-0 8
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 1-6-2-5-8-3-7-4
+																	tr
+																		td
+																			p.mb-0 8
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 1-3-7-5-8-6-2-4
+																	tr
+																		td
+																			p.mb-0 9
+																		td
+																			p.mb-0 40
+																		td
+																			p.mb-0 80
+																		td
+																			p.mb-0 1-8-5-3-9-6-2-7-4
+																	tr
+																		td
+																			p.mb-0 10
+																		td
+																			p.mb-0 72
+																		td
+																			p.mb-0 72
+																		td
+																			p.mb-0 1-6-2-8-4-10-5-9-3-7
+																	tr
+																		td
+																			p.mb-0 12
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 1-6-9-2-8-3-12-7-4-11-5-10
+																	tr
+																		td(colspan="4")
+																			h3.mb-0.text-center Двухтактные
+																	tr
+																		td
+																			p.mb-0 5
+																		td
+																			p.mb-0 72
+																		td
+																			p.mb-0 72
+																		td
+																			p.mb-0 1-5-2-3-4
+																	tr
+																		td
+																			p.mb-0 6
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 1-5-3-6-2-4
+																	tr
+																		td
+																			p.mb-0 7
+																		td
+																			p.mb-0 51 3/7
+																		td
+																			p.mb-0 51 3/7
+																		td
+																			p.mb-0 1-7-2-5-4-3-6
+																	tr
+																		td
+																			p.mb-0 8
+																		td
+																			p.mb-0 45
+																		td
+																			p.mb-0 45
+																		td
+																			p.mb-0 1-8-2-6-4-5-3-7
+																	tr
+																		td
+																			p.mb-0 9
+																		td
+																			p.mb-0 40
+																		td
+																			p.mb-0 40
+																		td
+																			p.mb-0 1-9-2-7-4-5-6-3-8
+																	tr
+																		td
+																			p.mb-0 10
+																		td
+																			p.mb-0 36
+																		td
+																			p.mb-0 36
+																		td
+																			p.mb-0 1-10-2-8-4-6-5-7-3-9
+																	tr
+																		td
+																			p.mb-0 12
+																		td
+																			p.mb-0 30
+																		td
+																			p.mb-0 30
+																		td
+																			p.mb-0 1-12-2-10-4-8-6-7-5-9-3-11
+																	tr
+																		td(colspan="4")
+																			h3.mb-0.text-center Четырехтактные V-образные
+																	tr
+																		td
+																			p.mb-0 6
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-2п-3л-1п-2л-3п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-5-3-4-2-6
+																	tr
+																		td
+																			p.mb-0 8
+																		td
+																			p.mb-0 180
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-4п-2л-3п-4л-1п-3л-2п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-8-2-7-4-5-3-6
+																	tr
+																		td
+																			p.mb-0 12
+																		td
+																			p.mb-0 120
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-6п-5л-2п-3л-4п-6л-1п-2л-5п-4л-3п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-12-5-8-3-10-6-7-2-11-4-9
+																	tr
+																		td
+																			p.mb-0 16
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 45
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-8п-3л-6п-4л-5п-2л-7п-8л-1п-6л-3п-5л-4п-7л-2п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-16-3-14-4-13-2-15-8-9-6-11-5-12-7-10
+																	tr
+																		td(colspan="4")
+																			h3.mb-0.text-center Двухтактные V-образные
+																	tr
+																		td
+																			p.mb-0 8
+																		td
+																			p.mb-0 90
+																		td
+																			p.mb-0 45
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-1п-3л-3п-2л-2п-4л-4п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-5-3-7-2-6-4-8
+																	tr
+																		td
+																			p.mb-0 12
+																		td
+																			p.mb-0 60
+																		td
+																			p.mb-0 30
+																		td
+																			p.mb-0.d-inline-block.mr-2 1л-5п-6л-1п-2л-6п-4л-2п-3л-4п-5л-3п
+																			v-tooltip(bottom)
+																				template(v-slot:activator='{ on }')
+																					v-btn(color="#00897B" v-on="on" :icon="true").d-inline-flex ?
+																				span 1-11-6-7-2-12-4-8-3-10-5-9
+													v-col(cols="12" md="4")
+														v-alert(v-if="engineCylinderNum == ''" text dense color='lightgrey' border='left')
+															p.font-weight-light.caption.mb-0 Прежде чем продолжить, необходимо ввести количество цилилиндров
+														v-list(v-else).mt-10
+															v-list-item(v-for="(item, index) in cylinderOperation" :key="index")
+																v-text-field(v-model="cylinderOperationComputed[index]" required outlined color="#00897B" type='number' hide-details).mb-2
+																	template(slot='label') {{index+1}}-м работает:
+															//p {{cylinderOperationComputed}}
+									p Порядок работы цилиндров: 
+										span(v-for="(item, index) in cylinderOperation" :key="index") {{cylinderOperationComputed[index]}} 
+									//p Постоянная КШМ:
 										span(v-if="this.connectingRodParam.length > 0 && this.connectingRod == true") {{ksmConstComputed}}
 										span(v-else) {{ksmConst}}
+							//v-row.mt-5
+								v-col(cols="12" md="6")
+									chart-line(v-if="showLine" :data="lineData" :options="ChartOptions")
 </template>
 <script>
 import { mapMutations } from 'vuex'
@@ -1010,10 +1305,80 @@ import { mapMutations } from 'vuex'
 export default {
 	data() {
 		return {
+			ChartOptions: {
+				maintainAspectRatio: false,
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true,
+						},
+						gridLines: {
+							offsetGridLines: false,
+						},
+					}],
+					xAxes: [{
+						ticks: {
+							beginAtZero:true,
+						},
+						gridLines:{
+							display: false,
+							tickMarkLength: 8
+						}
+					}]
+				}
+			},
+			lineData: {
+				labels: [0,0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25],
+				datasets: [
+					{
+						label: 'Цикл двигателя',
+						//type: 'bar',
+						offset: false,
+						backgroundColor: 'rgba(75, 192, 192, 0)',
+						borderColor: 'rgb(75, 192, 192)',
+						data: [{
+							x: 0,
+							y: 0.2
+						}, {
+							x: 0.22,
+							y: 0.2
+						}, {
+							x: 0.1,
+							y: 0.5
+						}, {
+							x: 0.05,
+							y: 2
+						}, {
+							x: 0.02,
+							y: 5
+						}, {
+							x: 0,
+							y: 11
+						}, {
+							x: 0,
+							y: 22
+						}, {
+							x: 0.01,
+							y: 22.5
+						}, {
+							x: 0.04,
+							y: 5
+						}, {
+							x: 0.22,
+							y: 0.5
+						}, {
+							x: 0.22,
+							y: 0.2
+						}
+						]
+					}
+				]
+			},
+			showLine: false,
 			BoostCoefTwoStroke: ['1.25', '1.3', '1.35', '1.4', '1.45', '1.5', '1.55', '1.6', '1.65', '1.7', '1.75', '1.8'],
 			BoostCoefFourStroke: ['1.05', '1.1', '1.15', '1.2', '1.25', '1.3', '1.35'],
 			HeatedChargeFromCylinderOne: ['5', '6', '7', '8', '9', '10'],
-			HeatedChargeFromCylinderTwo: ['11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
+			HeatedChargeFromCylinderTwo: ['5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
 			pressureBehindTheTurbine: ['0.101', '0.102', '0.103', '0.104', '0.105', '0.106'],
 			BoostPressureTwoStroke: ['0.1','0.11','0.12','0.13','0.14', '0.15', '0.16', '0.17', '0.18', '0.19', '0.2', '0.21', '0.22', '0.23', '0.24', '0.25', '0.26', '0.27', '0.28', '0.29', '0.3'],
 			BoostPressureFourStroke: ['0.13', '0.14', '0.15', '0.16', '0.17', '0.18', '0.19', '0.2', '0.21', '0.22', '0.23', '0.24', '0.25', '0.26', '0.27', '0.28', '0.29', '0.3'],
@@ -1109,13 +1474,36 @@ export default {
 			angleVengine: 0,
 			connectingRodParam: '',
 			ksmConst: '',
+			Pc: '',
+			Pz: '',
+			Pb: '',
+			Ps: '',
+			Pck: '',
+			n1Dynamic: '',
+			n2Dynamic: '',
+			Ro: '',
+			TurbinePower: '',
+			CompressorPower: '',
+			ReductorKPD: 100,
+			StepAngleChange: 20,
+			CylinderWork: false,
+			cylinderOperation: [],
 			// rules
 			nameRules: [
 				v => !!v || 'Поле не должно быть пустым',
 			]
 		}
 	},
+	beforeUpdate() {
+		this.showLine = true
+	},
 	computed: {
+		cylinderOperationComputed() {
+			if (this.engineCylinderNum > 0) {
+				this.cylinderOperation.length = this.engineCylinderNum;
+				return this.cylinderOperation;
+			}
+		},
 		table () {
 			return this.$store.state.table
 		},
